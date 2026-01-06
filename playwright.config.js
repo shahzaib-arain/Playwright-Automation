@@ -6,6 +6,6 @@ module.exports = defineConfig({
   use: {
     baseURL: 'https://staging.meandem.vercel.app',
     browserName: 'chromium',
-    headless: false,
+    headless: true,
   },
 });

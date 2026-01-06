@@ -1,14 +1,25 @@
-//Test no 10 pass (without username)
-import { test } from '@playwright/test';
-import { LoginPage3 } from '../pages/LoginPage3';
+// tests/page-scroll.spec.ts
+import { test, expect } from '@playwright/test';
 
-test('Login with password first and then username', async ({ page }) => {
-  const loginPage = new LoginPage3(page);
-
-  await loginPage.navigateToLoginPage();
-  await loginPage.enterPassword('12345');
-  await page.waitForTimeout(2000);
-  await loginPage.enterUsername('');
-  await loginPage.clickLoginButton();
-  await page.waitForTimeout(5000);
+test('Page can be scrolled and retains structure', async ({ page }) => {
+  await page.goto('https://parabank.parasoft.com/parabank/index.htm');
+  
+  // Get initial scroll position
+  const initialScrollY = await page.evaluate(() => window.scrollY);
+  expect(initialScrollY).toBe(0);
+  
+  // Scroll down
+  await page.evaluate(() => window.scrollTo(0, 300));
+  
+  const scrolledY = await page.evaluate(() => window.scrollY);
+  expect(scrolledY).toBeGreaterThan(0);
+  
+  // Scroll back to top
+  await page.evaluate(() => window.scrollTo(0, 0));
+  
+  const finalScrollY = await page.evaluate(() => window.scrollY);
+  expect(finalScrollY).toBe(0);
+  
+  // Verify content is still visible after scrolling
+  await expect(page.getByText('Customer Login')).toBeVisible();
 });
